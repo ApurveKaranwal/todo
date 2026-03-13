@@ -11,13 +11,12 @@ app.use(express.json());
 app.use(cors());
 
 app.post("/todo", async function (req, res) {
-    const createPayload = req.body;
-    const parsedPayload = createTodo.safeParse(createPayload);
+    const parsedPayload = createTodo.safeParse(req.body);
     if (!parsedPayload.success) {
         res.status(411).json({
             msg: "you sent wrong input",
         });
-        return;
+        return;// this return statement is here to make sure that the function ends after doing its work and do not proceed to execute further code
     }
 
     try {
@@ -52,12 +51,12 @@ app.put("/completed", async function (req, res) {
     }
 
     try {
-        const { id } = parsedPayload.data;
-        await todo.updateOne({ _id: id }, { completed: true });
+        const { id } = parsedPayload.data; //object destructuring,const id= parsedPayload.data.id;
+        await todo.updateOne({ _id: id }, { completed: true }); //matches the id given by frontend with the one stored in mongo, and replaces false with true
         res.json({ msg: "Todo marked as completed" });
     } catch (err) {
         console.error(err);
-        res.status(500).json({ msg: "in ternal server error" });
+        res.status(500).json({ msg: "internal server error" });
     }
 });
 
